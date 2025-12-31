@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply font-sans antialiased;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    min-height: 100vh;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-6 py-3 bg-gradient-to-r from-primary-500 to-primary-600 text-white font-semibold rounded-xl 
+           hover:from-primary-600 hover:to-primary-700 transition-all duration-300 
+           shadow-lg shadow-primary-500/25 hover:shadow-xl hover:shadow-primary-500/40
+           transform hover:-translate-y-0.5;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 bg-gradient-to-r from-secondary-500 to-secondary-600 text-white font-semibold rounded-xl 
+           hover:from-secondary-600 hover:to-secondary-700 transition-all duration-300 
+           shadow-lg shadow-secondary-500/25 hover:shadow-xl hover:shadow-secondary-500/40
+           transform hover:-translate-y-0.5;
+  }
+
+  .btn-outline {
+    @apply px-6 py-3 border-2 border-white/20 text-white font-semibold rounded-xl
+           hover:bg-white/10 hover:border-white/40 transition-all duration-300
+           backdrop-blur-sm;
+  }
+
+  .glass-card {
+    @apply bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl
+           shadow-xl shadow-black/20;
+  }
+
+  .glass-navbar {
+    @apply bg-dark-900/80 backdrop-blur-xl border-b border-white/5;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary-400 via-primary-300 to-secondary-400 
+           bg-clip-text text-transparent;
+  }
+
+  .glow {
+    @apply shadow-lg shadow-primary-500/50;
+  }
+
+  .card-hover {
+    @apply transition-all duration-500 hover:transform hover:-translate-y-2
+           hover:shadow-2xl hover:shadow-primary-500/20;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
