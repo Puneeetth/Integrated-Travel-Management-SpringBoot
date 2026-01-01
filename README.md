@@ -1,167 +1,194 @@
-🧳 Integrated Travel Management System – Spring Boot (JWT + MySQL + Swagger)
+# 🌍 TravelEase - Integrated Travel Management System
 
-A production-style backend system that manages tour packages, bookings, itineraries, guides, reviews, and user authentication — built with Spring Boot 3, Spring Security 7, JWT, Hibernate, and MySQL.
+A full-stack travel management platform built with **Spring Boot 3** backend and **React + TypeScript + TailwindCSS** frontend. Features include destinations exploration, hotel bookings, cab rentals, and a comprehensive admin panel.
 
-🚀 Features<br>
-🔐 Authentication & Authorization
+![Landing Page](Landing_Page.png)
 
-Register/Login using JWT
+---
 
-Password hashing using BCrypt
+## 🚀 Features
 
-Stateless security structure
+### 👤 User Features
+- **Authentication** - Register/Login with JWT tokens & BCrypt password hashing
+- **Explore Destinations** - Browse destinations by category (Beach, Mountain, Heritage, etc.)
+- **Book Activities** - Book activities at destinations with participant count
+- **Find Hotels** - Search hotels by city, view rooms, and book stays
+- **Book Cabs** - Browse cabs by vehicle type and book rides with fare estimate
+- **My Bookings** - View and manage all bookings (activities, hotels, cabs)
 
-Role-based access ready (TOURIST / ADMIN)
+### 🔐 Admin Features (Hidden Portal)
+- **Secure Admin Login** - Separate admin authentication at `/admin-portal`
+- **Dashboard** - Overview stats for destinations, hotels, and cabs
+- **Manage Destinations** - Add, view, and delete destinations
+- **Manage Hotels** - Add, view, and delete hotels
+- **Manage Cabs** - Add, view, and delete cabs
 
-🧳 Tour Package Module
+---
 
-Create new tour packages
+## 📸 Screenshots
 
-Update package details
+### User Dashboard
+![User Dashboard](User_Dashboard.png)
 
-Fetch all packages
+### Destinations
+![Destinations](Destinations.png)
 
-Delete package
+### Hotels
+![Hotels](Hotels.png)
 
-Auto-decrements seats on booking
+### My Bookings
+![User Bookings](User_Bookings.png)
 
-Handles concurrent seat updates safely
+### Admin Dashboard
+![Admin Dashboard](Admin_Dashboard.png)
 
-📝 Booking Module
+---
 
-Book a tour package
+## 🏗️ Tech Stack
 
-Prevents over-booking
+| Layer | Technology |
+|-------|------------|
+| **Backend** | Spring Boot 3, Spring MVC, Spring Security 7 |
+| **Frontend** | React 18, TypeScript, TailwindCSS, Vite |
+| **Database** | MySQL, Hibernate JPA |
+| **Auth** | JWT (JSON Web Tokens), BCrypt |
+| **API Docs** | Swagger 3 / Springdoc |
+| **Build** | Maven (Backend), npm (Frontend) |
 
-Uses optimistic locking + retry mechanism
+---
 
-User-wise bookings retrieval
+## 📁 Project Structure
 
-🗓️ Itinerary Module
-
-Add itinerary items for packages
-
-Update / delete itinerary entries
-
-Sorted retrieval (Day-wise)
-
-⭐ Review Module
-
-Add reviews for tour packages
-
-Restriction: only authenticated user
-
-Fetch reviews by package
-
-🧑‍✈️ Guide Module
-
-Assign guide to a user
-
-Guide list + details
-
-🏗️ Tech Stack
-Layer	Tech
-Backend	Spring Boot 3, Spring MVC
-Security	Spring Security 7, JWT
-DB	MySQL, Hibernate
-Build	Maven
-Docs	Swagger 3 / Springdoc
-📌 Project Structure
-src/main/java/com/tour/Integrated/Travel/Management
+```
+├── src/main/java/com/tour/Integrated/Travel/Management/
+│   ├── config/           # Security, JWT, CORS configuration
+│   ├── Controller/       # REST API endpoints
+│   ├── Service/          # Business logic
+│   ├── Repository/       # Data access layer
+│   ├── Model/            # Entity classes
+│   ├── dto/              # Request/Response DTOs
+│   ├── Transformers/     # Entity to DTO mappers
+│   └── Enum/             # Enumerations
 │
-├── config/  
-│   ├── SecurityConfig.java  
-│   ├── JwtUtil.java  
-│   └── JwtAuthenticationFilter.java  
-│
-├── controller/  
-│   ├── AuthController.java  
-│   ├── PackageController.java  
-│   ├── BookingController.java  
-│   ├── ReviewController.java  
-│   ├── GuideController.java  
-│   └── ItineraryController.java  
-│
-├── dto/
-│   ├── request/
-│   ├── response/
-│
-├── transformer/
-│   ├── PackageTransformer.java  
-│   ├── BookingTransformer.java  
-│   ├── ReviewTransformer.java  
-│   ├── GuideTransformer.java  
-│   └── ItineraryTransformer.java  
-│
-├── service/
-│   ├── PackageService.java  
-│   ├── BookingService.java  
-│   ├── ReviewService.java  
-│   ├── GuideService.java  
-│   └── ItineraryService.java  
-│
-└── model/
+├── frontend/src/
+│   ├── pages/            # React page components
+│   ├── components/       # Reusable UI components
+│   └── services/         # API service layer
+```
 
-⚙️ How to Run
-1️⃣ Clone the project
+---
+
+## ⚙️ Getting Started
+
+### Prerequisites
+- Java 17+
+- Node.js 18+
+- MySQL 8+
+- Maven
+
+### 1️⃣ Clone the Repository
+```bash
 git clone https://github.com/your-username/integrated-travel-management.git
 cd integrated-travel-management
+```
 
-2️⃣ Configure database
-
-Update application.properties:
-
+### 2️⃣ Configure Database
+Update `src/main/resources/application.properties`:
+```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/travel_db?createDatabaseIfNotExist=true
 spring.datasource.username=root
-spring.datasource.password=root
-
+spring.datasource.password=your_password
 spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
+```
 
-3️⃣ Run the project
-mvn spring-boot:run
+### 3️⃣ Run Backend
+```bash
+./mvnw spring-boot:run
+```
 
-🔐 Authentication Flow
-Register
+### 4️⃣ Run Frontend
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### 5️⃣ Access Application
+- **Frontend**: http://localhost:5173
+- **Backend API**: http://localhost:8080
+- **Swagger Docs**: http://localhost:8080/swagger-ui/index.html
+- **Admin Portal**: http://localhost:5173/admin-portal
+
+---
+
+## 🔐 Authentication
+
+### User Registration
+```http
 POST /api/auth/register
-{
-"name": "Punith",
-"email": "punith@gmail.com",
-"password": "12345"
-}
+Content-Type: application/json
 
-Login
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "password123"
+}
+```
+
+### User Login
+```http
 POST /api/auth/login
-{
-"email": "punith@gmail.com",
-"password": "12345"
-}
-
-
-Response:
+Content-Type: application/json
 
 {
-"token": "JWT_TOKEN_HERE"
+  "email": "john@example.com",
+  "password": "password123"
 }
+```
 
+### Admin Setup
+```http
+POST /api/auth/setup-admin
+```
+*Creates admin account: `admin@travelease.com` / `admin123`*
 
-Use it in Swagger or Postman:
+---
 
-Authorization: Bearer <JWT>
+## 📦 Modules
 
-📘 Swagger Documentation
+| Module | Backend | Frontend |
+|--------|---------|----------|
+| **Destinations** | ✅ CRUD + Activities | ✅ List, Detail, Booking |
+| **Hotels** | ✅ CRUD + Rooms + Bookings | ✅ Search, Detail, Room Booking |
+| **Cabs** | ✅ CRUD + Bookings + Fare | ✅ Filter, Book with Estimate |
+| **Admin Panel** | ✅ Role-based Auth | ✅ Dashboard + CRUD |
+| **Payments** | 🔜 Razorpay | 🔜 Payment Page |
 
-Once the app is running, open:
+---
 
-http://localhost:8080/swagger-ui/index.html
+## 🛡️ Security Features
 
-📸 Screenshots
+- JWT-based stateless authentication
+- BCrypt password hashing
+- Role-based access control (TOURIST, GUIDE, ADMIN)
+- Hidden admin portal (no public links)
+- CORS configured for frontend
 
-![img.png](img.png)
-![img_1.png](img_1.png)
-![img_2.png](img_2.png)
-![img_3.png](img_3.png)
+---
 
-🤝 Contributing
+## 🤝 Contributing
 
-Feel free to fork and PR improvements — like role-based admin access, payment integration, more analytics, etc.
+Contributions are welcome! Feel free to:
+- Fork the repository
+- Create a feature branch
+- Submit a pull request
+
+---
+
+## 📄 License
+
+This project is for educational purposes.
+
+---
+
+**Built with ❤️ using Spring Boot & React**
