@@ -26,8 +26,8 @@ public class AuthController {
         private final JwtUtil jwtUtil;
 
         public AuthController(UserRepository userRepository,
-                              BCryptPasswordEncoder encoder,
-                              JwtUtil jwtUtil) {
+                        BCryptPasswordEncoder encoder,
+                        JwtUtil jwtUtil) {
 
                 this.userRepository = userRepository;
                 this.encoder = encoder;
@@ -49,7 +49,7 @@ public class AuthController {
 
                 userRepository.save(u);
 
-                Map<String,Object> claims = new HashMap<>();
+                Map<String, Object> claims = new HashMap<>();
                 claims.put("role", u.getRole().name());
 
                 String token = jwtUtil.generateToken(u.getEmail(), claims);
@@ -61,7 +61,8 @@ public class AuthController {
         public AuthResponse login(@Valid @RequestBody AuthRequest req) {
 
                 var opt = userRepository.findByEmail(req.getEmail());
-                if (opt.isEmpty()) return new AuthResponse("");
+                if (opt.isEmpty())
+                        return new AuthResponse("");
 
                 User u = opt.get();
 
@@ -69,11 +70,63 @@ public class AuthController {
                         return new AuthResponse("");
                 }
 
-                Map<String,Object> claims = new HashMap<>();
+                Map<String, Object> claims = new HashMap<>();
                 claims.put("role", u.getRole().name());
+                claims.put("userId", u.getId());
+                claims.put("name", u.getName());
 
                 String token = jwtUtil.generateToken(u.getEmail(), claims);
 
                 return new AuthResponse(token);
+        }
+
+        @PostMapping("/admin/login")
+        public AuthResponse adminLogin(@Valid @RequestBody AuthRequest req) {
+
+                var opt = userRepository.findByEmail(req.getEmail());
+                if (opt.isEmpty())
+                        return new AuthResponse("");
+
+                User u = opt.get();
+
+                // Check if user is ADMIN
+                if (u.getRole() != Role.ADMIN) {
+                        return new AuthResponse("");
+                }
+
+                if (!encoder.matches(req.getPassword(), u.getPassword())) {
+                        return new AuthResponse("");
+                }
+
+                Map<String, Object> claims = new HashMap<>();
+                claims.put("role", u.getRole().name());
+                claims.put("userId", u.getId());
+                claims.put("name", u.getName());
+
+                String token = jwtUtil.generateToken(u.getEmail(), claims);
+
+                return new AuthResponse(token);
+        }
+
+        // Temporary endpoint to setup admin - remove after first use
+        @PostMapping("/setup-admin")
+        public String setupAdmin() {
+                var opt = userRepository.findByEmail("admin@travelease.com");
+                if (opt.isPresent()) {
+                        User u = opt.get();
+                        u.setPassword(encoder.encode("admin123"));
+                        u.setRole(Role.ADMIN);
+                        userRepository.save(u);
+                        return "Admin password reset successfully";
+                }
+
+                // Create new admin if doesn't exist
+                User admin = new User();
+                admin.setName("Admin");
+                admin.setEmail("admin@travelease.com");
+                admin.setPassword(encoder.encode("admin123"));
+                admin.setRole(Role.ADMIN);
+                userRepository.save(admin);
+                return "Admin created successfully";
         }
 }

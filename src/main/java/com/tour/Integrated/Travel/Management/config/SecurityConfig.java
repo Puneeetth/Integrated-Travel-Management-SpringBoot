@@ -5,12 +5,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
 
 @Configuration
 public class SecurityConfig {
@@ -42,18 +41,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
+        http.cors(Customizer.withDefaults()); // Uses CorsConfig bean
         http.csrf(csrf -> csrf.disable());
 
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll()   // login + register allowed
-                .requestMatchers("/error").permitAll()         // prevent spring error block
+                .requestMatchers("/api/auth/**").permitAll() // login + register allowed
+                .requestMatchers("/error").permitAll() // prevent spring error block
                 .requestMatchers(SWAGGER_WHITELIST).permitAll()
-                .anyRequest().authenticated()                  // everything else → requires JWT
+                .anyRequest().authenticated() // everything else → requires JWT
         );
 
-        http.sessionManagement(sm ->
-                sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        );
+        http.sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 

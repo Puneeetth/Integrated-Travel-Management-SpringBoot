@@ -12,7 +12,8 @@ const api = axios.create({
 // Request interceptor to add JWT token
 api.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('token');
+        // Check for admin token first, then regular user token
+        const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -41,6 +42,8 @@ export const authAPI = {
         api.post('/auth/login', { email, password }),
     register: (name: string, email: string, password: string) =>
         api.post('/auth/register', { name, email, password }),
+    adminLogin: (email: string, password: string) =>
+        api.post('/auth/admin/login', { email, password }),
 };
 
 // Package APIs
@@ -68,6 +71,85 @@ export const reviewAPI = {
 export const guideAPI = {
     getAll: () => api.get('/guides'),
     getById: (id: number) => api.get(`/guides/${id}`),
+};
+
+// Destination APIs
+export const destinationAPI = {
+    getAll: () => api.get('/destinations'),
+    getById: (id: number) => api.get(`/destinations/${id}`),
+    getByCategory: (category: string) => api.get(`/destinations/category/${category}`),
+    search: (city?: string, category?: string) => {
+        const params = new URLSearchParams();
+        if (city) params.append('city', city);
+        if (category) params.append('category', category);
+        return api.get(`/destinations/search?${params.toString()}`);
+    },
+    searchByKeyword: (keyword: string) => api.get(`/destinations/search/keyword?keyword=${keyword}`),
+    create: (data: object) => api.post('/destinations', data),
+    update: (id: number, data: object) => api.put(`/destinations/${id}`, data),
+    delete: (id: number) => api.delete(`/destinations/${id}`),
+};
+
+// Activity APIs
+export const activityAPI = {
+    getAll: () => api.get('/activities'),
+    getById: (id: number) => api.get(`/activities/${id}`),
+    getByDestination: (destinationId: number) => api.get(`/activities/destination/${destinationId}`),
+    create: (data: object) => api.post('/activities', data),
+    update: (id: number, data: object) => api.put(`/activities/${id}`, data),
+    delete: (id: number) => api.delete(`/activities/${id}`),
+    book: (userId: number, data: object) => api.post(`/activities/book/${userId}`, data),
+    getBookingsForUser: (userId: number) => api.get(`/activities/bookings/user/${userId}`),
+    getBookingById: (bookingId: number) => api.get(`/activities/bookings/${bookingId}`),
+    cancelBooking: (bookingId: number) => api.put(`/activities/bookings/${bookingId}/cancel`),
+    confirmBooking: (bookingId: number) => api.put(`/activities/bookings/${bookingId}/confirm`),
+};
+
+// Hotel APIs
+export const hotelAPI = {
+    getAll: () => api.get('/hotels'),
+    getById: (id: number) => api.get(`/hotels/${id}`),
+    search: (city?: string, starRating?: number) => {
+        const params = new URLSearchParams();
+        if (city) params.append('city', city);
+        if (starRating) params.append('starRating', starRating.toString());
+        return api.get(`/hotels/search?${params.toString()}`);
+    },
+    searchByKeyword: (keyword: string) => api.get(`/hotels/search/keyword?keyword=${keyword}`),
+    create: (data: object) => api.post('/hotels', data),
+    update: (id: number, data: object) => api.put(`/hotels/${id}`, data),
+    delete: (id: number) => api.delete(`/hotels/${id}`),
+    // Room endpoints
+    getRoomsByHotel: (hotelId: number) => api.get(`/hotels/${hotelId}/rooms`),
+    getAvailableRooms: (hotelId: number) => api.get(`/hotels/${hotelId}/rooms/available`),
+    createRoom: (data: object) => api.post('/hotels/rooms', data),
+    // Booking endpoints
+    book: (userId: number, data: object) => api.post(`/hotels/bookings/${userId}`, data),
+    getBookingsForUser: (userId: number) => api.get(`/hotels/bookings/user/${userId}`),
+    getBookingById: (bookingId: number) => api.get(`/hotels/bookings/${bookingId}`),
+    cancelBooking: (bookingId: number) => api.put(`/hotels/bookings/${bookingId}/cancel`),
+    confirmBooking: (bookingId: number) => api.put(`/hotels/bookings/${bookingId}/confirm`),
+};
+
+// Cab APIs
+export const cabAPI = {
+    getAll: () => api.get('/cabs'),
+    getById: (id: number) => api.get(`/cabs/${id}`),
+    getAvailable: () => api.get('/cabs/available'),
+    getByType: (vehicleType: string) => api.get(`/cabs/type/${vehicleType}`),
+    getAvailableByType: (vehicleType: string) => api.get(`/cabs/available/${vehicleType}`),
+    create: (data: object) => api.post('/cabs', data),
+    update: (id: number, data: object) => api.put(`/cabs/${id}`, data),
+    delete: (id: number) => api.delete(`/cabs/${id}`),
+    setAvailability: (id: number, available: boolean) => api.put(`/cabs/${id}/availability?available=${available}`),
+    // Booking endpoints
+    book: (userId: number, data: object) => api.post(`/cabs/bookings/${userId}`, data),
+    getBookingsForUser: (userId: number) => api.get(`/cabs/bookings/user/${userId}`),
+    getBookingById: (bookingId: number) => api.get(`/cabs/bookings/${bookingId}`),
+    cancelBooking: (bookingId: number) => api.put(`/cabs/bookings/${bookingId}/cancel`),
+    confirmBooking: (bookingId: number) => api.put(`/cabs/bookings/${bookingId}/confirm`),
+    completeBooking: (bookingId: number, finalFare?: number) =>
+        api.put(`/cabs/bookings/${bookingId}/complete${finalFare ? `?finalFare=${finalFare}` : ''}`),
 };
 
 export default api;

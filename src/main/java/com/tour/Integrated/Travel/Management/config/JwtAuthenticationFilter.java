@@ -26,6 +26,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+        // Skip JWT filter for auth endpoints
+        return path.startsWith("/api/auth/");
+    }
+
+    @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
             throws ServletException, IOException {
 
@@ -36,25 +43,31 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
-            username = jwtUtil.extractUsername(token);
+            try {
+                username = jwtUtil.extractUsername(token);
+            } catch (Exception e) {
+                // Invalid token - clear it and continue without authentication
+                logger.warn("Invalid JWT token: " + e.getMessage());
+            }
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            try {
+                UserDetails user = userDetailsService.loadUserByUsername(username);
 
-            UserDetails user = userDetailsService.loadUserByUsername(username);
+                if (jwtUtil.isTokenValid(token, username)) {
 
-            if (jwtUtil.isTokenValid(token, username)) {
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            user,
+                            null,
+                            user.getAuthorities());
 
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(
-                                user,
-                                null,
-                                user.getAuthorities()
-                        );
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
 
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
-
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
+            } catch (Exception e) {
+                logger.warn("Could not authenticate user: " + e.getMessage());
             }
         }
 
