@@ -12,8 +12,12 @@ const api = axios.create({
 // Request interceptor to add JWT token
 api.interceptors.request.use(
     (config) => {
-        // Check for admin token first, then regular user token
-        const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
+        // Use admin token for admin pages, otherwise use user token
+        const isAdminPage = window.location.pathname.startsWith('/admin');
+        const token = isAdminPage
+            ? localStorage.getItem('adminToken')
+            : localStorage.getItem('token');
+
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -150,6 +154,18 @@ export const cabAPI = {
     confirmBooking: (bookingId: number) => api.put(`/cabs/bookings/${bookingId}/confirm`),
     completeBooking: (bookingId: number, finalFare?: number) =>
         api.put(`/cabs/bookings/${bookingId}/complete${finalFare ? `?finalFare=${finalFare}` : ''}`),
+};
+
+// Payment APIs
+export const paymentAPI = {
+    checkPendingPayment: (userId: number) => api.get(`/payments/pending/${userId}`),
+    createOrder: (userId: number, data: { hotelBookingIds?: number[], cabBookingIds?: number[], activityBookingIds?: number[] }) =>
+        api.post(`/payments/create-order/${userId}`, data),
+    verifyPayment: (data: { razorpayOrderId: string, razorpayPaymentId: string, razorpaySignature: string }) =>
+        api.post('/payments/verify', data),
+    cancelPayment: (paymentId: number, userId: number) =>
+        api.put(`/payments/${paymentId}/cancel/${userId}`),
+    getPaymentsForUser: (userId: number) => api.get(`/payments/user/${userId}`),
 };
 
 export default api;

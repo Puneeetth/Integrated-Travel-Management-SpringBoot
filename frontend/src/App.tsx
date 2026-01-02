@@ -9,6 +9,7 @@ import Hotels from './pages/Hotels';
 import HotelDetail from './pages/HotelDetail';
 import Cabs from './pages/Cabs';
 import MyBookings from './pages/MyBookings';
+import Payment from './pages/Payment';
 // Admin pages (hidden routes)
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -29,6 +30,7 @@ function App() {
         <Route path="/hotels/:id" element={<HotelDetail />} />
         <Route path="/cabs" element={<Cabs />} />
         <Route path="/my-bookings" element={<MyBookings />} />
+        <Route path="/payment" element={<Payment />} />
 
         {/* Admin Routes (Hidden - No links from main UI) */}
         <Route path="/admin-portal" element={<AdminLogin />} />

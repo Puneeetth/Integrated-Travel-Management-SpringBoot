@@ -1,6 +1,6 @@
 # 🌍 TravelEase - Integrated Travel Management System
 
-A full-stack travel management platform built with **Spring Boot 3** backend and **React + TypeScript + TailwindCSS** frontend. Features include destinations exploration, hotel bookings, cab rentals, and a comprehensive admin panel.
+A full-stack travel management platform built with **Spring Boot 3** backend and **React + TypeScript + TailwindCSS** frontend. Features include destinations exploration, hotel bookings, cab rentals, Razorpay payments, and a comprehensive admin panel.
 
 ![Landing Page](Landing_Page.png)
 
@@ -15,6 +15,16 @@ A full-stack travel management platform built with **Spring Boot 3** backend and
 - **Find Hotels** - Search hotels by city, view rooms, and book stays
 - **Book Cabs** - Browse cabs by vehicle type and book rides with fare estimate
 - **My Bookings** - View and manage all bookings (activities, hotels, cabs)
+- **Payment Integration** - Secure payments via Razorpay with pending payment tracking
+- **Premium Dashboard** - Real-time stats, recent activity, and points system
+
+### 💳 Payment Features (Razorpay)
+- Cart-style checkout for multiple bookings
+- Select which bookings to pay
+- Real-time total calculation
+- Secure Razorpay checkout
+- Automatic booking confirmation after payment
+- Pending payment alerts on dashboard
 
 ### 🔐 Admin Features (Hidden Portal)
 - **Secure Admin Login** - Separate admin authentication at `/admin-portal`
@@ -52,6 +62,7 @@ A full-stack travel management platform built with **Spring Boot 3** backend and
 | **Frontend** | React 18, TypeScript, TailwindCSS, Vite |
 | **Database** | MySQL, Hibernate JPA |
 | **Auth** | JWT (JSON Web Tokens), BCrypt |
+| **Payments** | Razorpay |
 | **API Docs** | Swagger 3 / Springdoc |
 | **Build** | Maven (Backend), npm (Frontend) |
 
@@ -72,7 +83,14 @@ A full-stack travel management platform built with **Spring Boot 3** backend and
 │
 ├── frontend/src/
 │   ├── pages/            # React page components
+│   │   ├── admin/        # Admin portal pages
+│   │   ├── Dashboard.tsx # Premium user dashboard
+│   │   ├── Payment.tsx   # Razorpay checkout page
+│   │   └── ...
 │   ├── components/       # Reusable UI components
+│   │   ├── Packages.tsx  # Travel packages section
+│   │   ├── About.tsx     # About us section
+│   │   └── ...
 │   └── services/         # API service layer
 ```
 
@@ -92,13 +110,17 @@ git clone https://github.com/your-username/integrated-travel-management.git
 cd integrated-travel-management
 ```
 
-### 2️⃣ Configure Database
+### 2️⃣ Configure Database & Razorpay
 Update `src/main/resources/application.properties`:
 ```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/travel_db?createDatabaseIfNotExist=true
 spring.datasource.username=root
 spring.datasource.password=your_password
 spring.jpa.hibernate.ddl-auto=update
+
+# Razorpay Configuration
+razorpay.key.id=your_razorpay_key_id
+razorpay.key.secret=your_razorpay_key_secret
 ```
 
 ### 3️⃣ Run Backend
@@ -162,7 +184,23 @@ POST /api/auth/setup-admin
 | **Hotels** | ✅ CRUD + Rooms + Bookings | ✅ Search, Detail, Room Booking |
 | **Cabs** | ✅ CRUD + Bookings + Fare | ✅ Filter, Book with Estimate |
 | **Admin Panel** | ✅ Role-based Auth | ✅ Dashboard + CRUD |
-| **Payments** | 🔜 Razorpay | 🔜 Payment Page |
+| **Payments** | ✅ Razorpay Integration | ✅ Checkout Page |
+| **Dashboard** | ✅ User Stats API | ✅ Premium UI with Real Data |
+
+---
+
+## 💳 Payment Flow
+
+1. User books hotels/cabs/activities → Status = `PENDING`
+2. Navigate to **My Bookings** → Click **"Pay Now"**
+3. Select bookings to pay → Click **"Pay ₹X"**
+4. Razorpay checkout opens → Complete payment
+5. Bookings updated to `CONFIRMED`
+
+### Test Card (Razorpay Test Mode)
+- Card: `4111 1111 1111 1111`
+- CVV: Any 3 digits
+- Expiry: Any future date
 
 ---
 
@@ -173,6 +211,7 @@ POST /api/auth/setup-admin
 - Role-based access control (TOURIST, GUIDE, ADMIN)
 - Hidden admin portal (no public links)
 - CORS configured for frontend
+- Secure payment signature verification
 
 ---
 

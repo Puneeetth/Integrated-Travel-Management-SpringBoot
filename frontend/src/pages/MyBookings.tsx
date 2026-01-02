@@ -165,9 +165,27 @@ const MyBookings = () => {
             </header>
 
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <div className="mb-8">
-                    <h1 className="text-4xl font-display font-bold text-white mb-2">My Bookings</h1>
-                    <p className="text-gray-400">View and manage all your bookings in one place</p>
+                <div className="mb-8 flex items-center justify-between flex-wrap gap-4">
+                    <div>
+                        <h1 className="text-4xl font-display font-bold text-white mb-2">My Bookings</h1>
+                        <p className="text-gray-400">View and manage all your bookings in one place</p>
+                    </div>
+                    {/* Payment Banner */}
+                    {(activityBookings.filter(b => b.status === 'PENDING').length +
+                        hotelBookings.filter(b => b.status === 'PENDING').length +
+                        cabBookings.filter(b => b.status === 'PENDING').length) > 0 && (
+                            <Link
+                                to="/payment"
+                                className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-semibold rounded-xl hover:from-green-600 hover:to-emerald-600 transition-all shadow-lg"
+                            >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                </svg>
+                                Pay Now ({activityBookings.filter(b => b.status === 'PENDING').length +
+                                    hotelBookings.filter(b => b.status === 'PENDING').length +
+                                    cabBookings.filter(b => b.status === 'PENDING').length} pending)
+                            </Link>
+                        )}
                 </div>
 
                 <div className="glass-card p-2 mb-8">
